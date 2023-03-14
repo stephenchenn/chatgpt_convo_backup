@@ -1,0 +1,41 @@
+show me how to use gdalbuildvrt to merge png with pgw world files together
+
+To use gdalbuildvrt to merge PNG files with PGW world files together, you can follow the steps below:
+1. Open the terminal or command prompt on your computer.
+2. Navigate to the directory where your PNG files and PGW world files are located.
+3. Run the following command:
+	gdalbuildvrt merged.vrt *.png
+	This command will create a virtual raster file named merged.vrt that contains all the PNG files in the current directory.
+
+4. Next, you need to add the PGW world files to the virtual raster file. Run the following command:
+	gdal_edit.py -a_srs EPSG:4326 -a_ullr <upper_left_x> <upper_left_y> <lower_right_x> <lower_right_y> merged.vrt
+	In this command, replace EPSG:4326 with the appropriate coordinate reference system (CRS) for your data. You also need to replace <upper_left_x>, <upper_left_y>, <lower_right_x>, and <lower_right_y> with the coordinates of the bounding box of your data. You can find these coordinates in the PGW world files. For example, if your PGW file is named image.pgw, you can open it in a text editor to find the coordinates.
+	
+5. Finally, you can open the virtual raster file in a GIS software such as QGIS or ArcGIS to view the merged PNG images with their corresponding world files.
+
+
+what is a virtual raster file?
+
+A virtual raster file (VRT) is a file format used by the Geospatial Data Abstraction Library (GDAL) to represent a mosaic of multiple raster data files. Instead of physically merging all the input raster files into a single large file, a VRT file creates a virtual mosaic of the input files, which means that the individual input files remain separate, but are presented as a single merged file.
+
+A VRT file acts as a pointer to the individual input raster files and provides a unified view of the mosaic. The VRT file contains metadata about the input files, such as their location, resolution, and projection, and defines how they are spatially organized and merged. VRT files can be used to efficiently process large collections of raster data without the need for physically merging the input files, which can be time-consuming and require a large amount of disk space.
+
+VRT files can be created using the gdalbuildvrt utility, which is part of the GDAL library. VRT files can be opened and viewed in GIS software such as QGIS or ArcGIS, which can then perform operations on the mosaic data, such as visualization, analysis, or export to other formats.
+
+okay, now show me how to build tile pyramid from a vrt file using gdal_retile
+Sure, here are the steps to build a tile pyramid from a VRT file using gdal_retile:
+
+1. Open your command prompt or terminal and navigate to the directory containing your VRT file.
+
+2. Run the following command:
+	gdal_retile.py -v -r bilinear -levels 4 -ps 2048 2048 -co "TILED=YES" -co "COMPRESS=JPEG" -targetDir output_folder input_file.vrt
+
+This command will generate a tile pyramid with 4 levels of resolution, with each tile being 2048x2048 pixels in size, using bilinear resampling. The resulting tiles will be compressed using JPEG and stored in the output_folder.
+
+You can adjust the -levels, -ps, -co, and -targetDir parameters according to your needs.
+
+3. Wait for the process to finish. Depending on the size of your VRT file and the specifications you have set, this may take a while.
+
+4. Once the process is complete, navigate to the output_folder directory to view your tile pyramid.
+
+That's it! You should now have a tile pyramid generated from your VRT file using gdal_retile.
